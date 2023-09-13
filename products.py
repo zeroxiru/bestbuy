@@ -15,9 +15,9 @@ class Product:
         if not name:
             raise ValueError("Name cannot be empty")
         if price <= 0:
-            raise ValueError("Name cannot be negative")
+            raise ValueError("Price cannot be negative")
         if quantity < 0:
-            raise ValueError("Name cannot be negative")
+            raise ValueError("Quantity cannot be negative")
         self._name = name
         self._price = price
         self._quantity = quantity
