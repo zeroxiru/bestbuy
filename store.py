@@ -1,6 +1,6 @@
 import products as products
 
-#from products import Product
+from products import Product
 
 class Store:
     """
@@ -53,7 +53,7 @@ class Store:
         total_quantity = sum(product._quantity for product in self._products)
         return total_quantity
 
-    def get_all_products(self) -> list[products.Product]:
+    def get_all_products(self) -> list[Product]:
         """
          Returns a list of all active products in the store.
 
@@ -65,9 +65,10 @@ class Store:
         #     if item_product.is_active():
         #         active_product.append(item_product)
         # return active_product
-        active_products = [product for product in self._products if product.is_active()]
-
-        return active_products
+        # active_products = [prod for prod in self._products if prod.is_active()]
+        #
+        # return active_products
+        return self._products
 
 
 
