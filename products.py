@@ -1,4 +1,4 @@
-
+import promotions
 class Product:
     def __init__(self, name: str, price: float, quantity: int):
         """
@@ -22,6 +22,16 @@ class Product:
         self._price = price
         self._quantity = quantity
         self._active = True
+        self._promotion = promotions.Promotion = None
+
+
+    def get_promotion(self):
+        return self._promotion
+
+    def set_promotion(self, product_promotion: promotions.Promotion):
+        self._promotion = product_promotion
+
+
 
     def get_quantity(self) -> float:
         """
@@ -43,7 +53,9 @@ class Product:
 
         """
         self._quantity = quantity
-        if quantity == 0:
+        if quantity < 0:
+            raise  ValueError("quantity cannot be negative")
+        if not self._quantity:
             self._active = False
 
     def is_active(self) -> bool:
@@ -70,9 +82,13 @@ class Product:
 
     def show(self) -> str:
         """
-        Returns a string that representations the product.
+        Returns a string that representations the product with promotion.
         """
-        return f"Product(name={self._name},price={self._price}, quantity={self._quantity})"
+        product_promotion = f"Product(name={self._name},price={self._price}, quantity={self._quantity})"
+
+        if self._promotion:
+            product_promotion + f", Promotion: {self._promotion.get_name()} "
+        return product_promotion
 
 
     def buy(self, quantity) -> float:
@@ -129,8 +145,9 @@ class NonStockedProduct(Product):
         """
         if not self._active:
             raise ValueError("The product is not active")
-            total_price = quantity * self._price
-            return total_price
+        total_price = quantity * self._price
+
+        return total_price
 
 
 

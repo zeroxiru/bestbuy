@@ -100,6 +100,7 @@ def start(store_obj):
                 print("------")
 
                 order_list = []
+                total_price = 0.0
                 while True:
                     product_num = input("Which product # do you want? ")
                     if not product_num:
@@ -108,19 +109,23 @@ def start(store_obj):
                     selected_product = products[product_num]  # Access the selected product directly
                     amount = int(input("What amount do you want? "))
 
-                    if isinstance(selected_product, products.NonStockedProduct):
-                        non_stocked_product = products.NonStockedProduct(selected_product._name, selected_product._price)
-                        order_list.append((non_stocked_product, amount))
-                    elif amount != 0 and amount <= selected_product._quantity:
-                        order_list.append((selected_product, amount))
-                    else:
-                        print(f"Given product: {selected_product._name} amount is more than storage quantity")
+                    #if amount > 0:
+                    order_list.append((selected_product, amount))
+                    total_price += selected_product.buy(amount)
 
-                print("Products added to the list!\n")
 
-                total_payment = store_obj.order(order_list)
-                print("********")
-                print(f"Order made! Total payment: ${total_payment}")
+                    # if amount != 0 and amount <= selected_product._quantity:
+                    #     order_list.append((selected_product, amount))
+                    # else:
+                    #     print(f"Given product: {selected_product._name} amount is more than storage quantity")
+
+                    print("Products added to the list!\n")
+
+                    #total_payment = store_obj.order(order_list)
+                    # total_payment = sum (product.buy(amount) for product, amount in order_list)
+                    formatted_price = f"{total_price:.2f}"
+                    print("********")
+                    print(f"Order made! Total payment: ${formatted_price}")
             elif choice == '4':
                 print("Goodbye!")
                 break
