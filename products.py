@@ -22,14 +22,49 @@ class Product:
         self._price = price
         self._quantity = quantity
         self._active = True
-        self._promotion = promotions.Promotion = None
+        self._promotion = None
 
 
     def get_promotion(self):
         return self._promotion
 
-    def set_promotion(self, product_promotion: promotions.Promotion):
-        self._promotion = product_promotion
+    def set_promotion(self, promotion):
+        """
+        Set a promotion for the product.
+
+        Args:
+            promotion (Promotion): An instance of a promotion class.
+
+        Raises:
+            ValueError: If the promotion is not an instance of the Promotion class.
+        """
+        self._promotion = promotion
+
+    def get_name(self):
+        """
+               Getter function for the name.
+
+               Returns:
+                    string: The name of the product as a str.
+               """
+        return self._name
+
+
+    def set_name(self, value):
+        self._name = value
+
+    def get_price(self):
+        """
+                      Getter function for the price.
+
+                      Returns:
+                           float: The price of the product as a float.
+                      """
+        return self._price
+
+    def set_price(self, value):
+
+        self._price = value
 
 
 
@@ -87,7 +122,7 @@ class Product:
         product_promotion = f"Product(name={self._name},price={self._price}, quantity={self._quantity})"
 
         if self._promotion:
-            product_promotion + f", Promotion: {self._promotion.get_name()} "
+            product_promotion += f", Promotion: {self._promotion.get_name()} "
         return product_promotion
 
 
@@ -107,10 +142,18 @@ class Product:
         """
         if quantity > self._quantity:
             raise ValueError("The provided amount is not available")
+
         if not self._active:
             raise ValueError("The product is not active")
-        total_price = quantity * self._price
+        if quantity <= 0:
+            raise ValueError("quantity cannot be negative")
+        if self._promotion:
+            total_price = self._promotion.apply_promotion(self._price, quantity)
+        else:
+            total_price = quantity * self._price
+
         self._quantity -= quantity
+
         return total_price
 
 
@@ -129,7 +172,14 @@ class NonStockedProduct(Product):
 
     # Override the show method to display special characteristics
     def show(self) -> str:
-        return f"Non-Stocked Product(name={self._name}, price ={self._price}, Quantity: Not Physical(As per Required)"
+        product_display = f"Non-Stocked Product(name={self._name}, price ={self._price}, " \
+                          f"Quantity: Not Physical(As per Required)"
+        promotion = self._promotion
+        if promotion:
+            product_display += f"Promotion:{promotion.get_name()}"
+
+        return product_display
+
 
     def buy(self, quantity) -> float:
         """
@@ -145,11 +195,13 @@ class NonStockedProduct(Product):
         """
         if not self._active:
             raise ValueError("The product is not active")
-        total_price = quantity * self._price
+
+        if self._promotion:
+            total_price = self._promotion.apply_promotion(quantity, self._price)
+        else:
+            total_price = quantity * self._price
 
         return total_price
-
-
 
 class LimitedProduct(Product):
     def __init__(self, name: str, price: float, max_quantity: int):
@@ -160,8 +212,17 @@ class LimitedProduct(Product):
     def buy(self, quantity) -> float:
         if quantity > self._max_quantity:
             raise ValueError("Quantity exceeds the maximum allowed")
-        total_price = quantity * self._price
+
+
+        if self._promotion:
+            total_price = self._promotion.apply_promotion(quantity, self._price)
+        else:
+            total_price = quantity * self._price
+
         self._quantity -= quantity
+        if self._quantity ==0:
+            self.deactivate()
+
         return total_price
 
     def show(self) -> str:
